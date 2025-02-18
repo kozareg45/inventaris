@@ -58,6 +58,11 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Koza Database</title>
     <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&display=swap" rel="stylesheet">
+    <script>
+        function printTable() {
+            window.print(); // Langsung munculin dialog print
+        }
+    </script>
     <style>
         * {
             font-family: 'Poppins', sans-serif;
@@ -219,9 +224,32 @@ $result = $conn->query($sql);
         .form-container button:hover {
             background-color: #218838;
         }
+        /* CSS Print - Hanya Cetak Tabel */
+        @media print {
+            body * {
+                visibility: hidden; /* Sembunyikan semua elemen */
+            }
+            #printArea, #printArea * {
+                visibility: visible; /* Hanya tampilkan tabel */
+            }
+            #printArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none; /* Sembunyikan tombol print */
+            }
+        }
     </style>
 </head>
 <body>
+
+<div class="no-print">
+    <h2>Navbar (Tidak akan dicetak)</h2>
+    <button onclick="printTable()">🖨️ Print</button>
+</div>
 
     <!-- Navbar -->
     <div class="navbar">
@@ -274,5 +302,31 @@ $result = $conn->query($sql);
             </form>
         </div>
     </div>
+
+
+    <div id="printArea">
+    <h2>Data Barang</h2>
+    <table>
+        <tr>
+            <th>ID Barang</th>
+            <th>Nama Barang</th>
+            <th>Harga</th>
+            <th>Stok</th>
+        </tr>
+        <?php
+        include 'db-config.php';
+        $query = "SELECT * FROM barang45";
+        $result = $conn->query($sql);
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>
+                    <td>{$row['id_paket']}</td>
+                    <td>{$row['nama_paket']}</td>
+                    <td>Rp" . number_format($row['harga']) . "</td>
+                    <td>{$row['status']}</td>
+                  </tr>";
+        }
+        ?>
+    </table>
+</div>
 </body>
 </html>
